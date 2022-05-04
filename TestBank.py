@@ -49,9 +49,15 @@ class TestBank(unittest.TestCase):
         self._original_stdout = sys.stdout
         self._original_stderr = sys.stderr
 
-        self.driver = webdriver.Chrome("C:/Users/Jens/Downloads/chromedriver.exe")
+        self.test_first_name = "Python"
+        self.test_last_name = "Tester"
+        self.test_email = "pythontest@python.com"
+        self.test_password = "123123"
 
-        self.local_ip = "https://recipe.bhsi.xyz/frontend"
+        self.driver = webdriver.Chrome("C:/Users/jens_/OneDrive/Skrivebord/chromedriver.exe")
+
+        #self.local_ip = "https://recipe.bhsi.xyz/frontend"
+        self.local_ip = "http://localhost:3000/"
         self.driver.get(self.local_ip)
         self.helpers = SeleniumHelpers(driver=self.driver)
         self.logger = FileLogging()
@@ -92,31 +98,35 @@ class TestBank(unittest.TestCase):
         self._restoreStdout()
         self.logger.info("********TestClass.tearDown ends*************")
 
+    def _login(self):
+        """
+        """
+        self.helpers.find_element_by_xpath("//a[text()='Log in']").click()
+        email_input_field = self.helpers.find_element_by_xpath("//input[@type='email']")
+        password_input_field = self.helpers.find_element_by_xpath("//input[@type='password']")
+        email_input_field.send_keys(self.test_email)
+        password_input_field.send_keys(self.test_password)
+        password_input_field.send_keys(Keys.ENTER)
+
     def _sign_up(self):
         """
         """
-        first_name = "Jens"
-        last_name = "Kloster"
-        username = "Bozeri"
-        email = "dsa@dsa.com"
-        password = "123123"
-
         try:
+            self.logger.info("Redirecting to /sign up")
             self.helpers.find_element_by_xpath("//a[text()='Sign up']").click()
             # input_field = self.helpers.find_element_by_xpath("//input[value id()='mui-1']")
             self.logger.info("Filling out the login form")
             input_field_first_name = self.helpers.find_element_by_id('mui-1')
             input_field_last_name = self.helpers.find_element_by_id('mui-2')
-            input_field_username = self.helpers.find_element_by_id('mui-3')
-            input_field_email = self.helpers.find_element_by_id('mui-4')
-            input_field_password = self.helpers.find_element_by_id('mui-5')
-            input_field_passwd_confirm = self.helpers.find_element_by_id('mui-6')
-            input_field_first_name.send_keys(first_name)
-            input_field_last_name.send_keys(last_name)
-            input_field_username.send_keys(username)
-            input_field_email.send_keys(email)
-            input_field_password.send_keys(password)
-            input_field_passwd_confirm.send_keys(password)
+            input_field_email = self.helpers.find_element_by_id('mui-3')
+            input_field_password = self.helpers.find_element_by_id('mui-4')
+            input_field_passwd_confirm = self.helpers.find_element_by_id('mui-5')
+            input_field_first_name.send_keys(self.test_first_name)
+            input_field_last_name.send_keys(self.test_last_name)
+            input_field_email.send_keys(self.test_email)
+            input_field_password.send_keys(self.test_password)
+            input_field_passwd_confirm.send_keys(self.test_password)
+            self.logger.info("Submitting form by 'Enter' key press")
             input_field_passwd_confirm.send_keys(Keys.ENTER)
         except NoSuchElementException as e:
             raise AssertionError(e)
@@ -141,65 +151,104 @@ class TestBank(unittest.TestCase):
         else:
             raise AssertionError("The button did not redirect to signup page")
 
-
     def check_sign_up(self):
         """
         Check that when signing up then under profile its the same as what you signed up with.
         """
         self.logger.info("Redirecting to sign up page.")
-        first_name = "Jens"
-        last_name = "Kloster"
-        username = "Bozeri"
-        email = "dsa@dsa.com"
-        password = "123123"
         try:
-            self.logger.info("Redirecting to /sign up")
-            self.helpers.find_element_by_xpath("//a[text()='Sign up']").click()
-            #input_field = self.helpers.find_element_by_xpath("//input[value id()='mui-1']")
-            self.logger.info("Filling out the login form")
-            input_field_first_name = self.helpers.find_element_by_id('mui-1')
-            input_field_last_name = self.helpers.find_element_by_id('mui-2')
-            input_field_username = self.helpers.find_element_by_id('mui-3')
-            input_field_email = self.helpers.find_element_by_id('mui-4')
-            input_field_password = self.helpers.find_element_by_id('mui-5')
-            input_field_passwd_confirm = self.helpers.find_element_by_id('mui-6')
-            input_field_first_name.send_keys(first_name)
-            input_field_last_name.send_keys(last_name)
-            input_field_username.send_keys(username)
-            input_field_email.send_keys(email)
-            input_field_password.send_keys(password)
-            input_field_passwd_confirm.send_keys(password)
-            # time.sleep(10)
-            self.logger.info("Submitting form by 'Enter' key press")
-            input_field_passwd_confirm.send_keys(Keys.ENTER)
+            #self._sign_up()
+            self._login()
             self.logger.info("Clicking on avatar icon")
             self.helpers.find_element_by_xpath("//*[@data-testid='PersonIcon']").click()
             self.logger.info("Clicking in on the profile page")
             self.helpers.find_element_by_xpath("//p[text()='Profile']").click()
 
+            time.sleep(5)
             #Next
-            profile_name = self.helpers.find_element_by_xpath("//p[text()='Name:']/..//following-sibling::div//p").text
-            profile_username = self.helpers.find_element_by_xpath("//p[text()='Username:']/..//following-sibling::div//p").text
+            profile_first_name = self.helpers.find_element_by_xpath("//p[text()='First name:']/..//following-sibling::div//p").text
+            profile_last_name = self.helpers.find_element_by_xpath("//p[text()='Last name:']/..//following-sibling::div//p").text
             profile_email = self.helpers.find_element_by_xpath("//p[text()='Email:']/..//following-sibling::div//p").text
+            self.logger.info("Should be:\nFirst name: %s, Last name: %s, Email: %s\nActual\nFirst name: %s, Last name: %s, Email: %s" % (self.test_first_name, self.test_last_name, self.test_email, profile_first_name, profile_last_name, profile_email))
             #print (profile_name, profile_username, profile_email)
-            self.assertEqual(profile_name, first_name + " " + last_name, "The signed up first and last name did not match the profiles!")
-            self.assertEqual(username, profile_username, "The signed up username did not match the profiles!")
-            self.assertEqual(email, profile_email, "The signed up email did not match the profiles!")
+            self.assertEqual(profile_first_name, self.test_first_name, "The signed up first and last name did not match the profiles!")
+            self.assertEqual(profile_last_name, self.test_last_name, "The signed up username did not match the profiles!")
+            self.assertEqual(profile_email, self.test_email, "The signed up email did not match the profiles!")
             self.logger.info("The test was a success.")
-
-            # time.sleep(10)
+            time.sleep(5)
         except NoSuchElementException as e:
             raise AssertionError(e)
+
+    def create_new_list(self):
+        """
+        """
+        self.logger.info("Logging into test account.")
+        self._login()
+        list_name = "test_list"
+        test_bool = False
+        self.logger.info("Creating list with name: %s" % list_name)
+        self.helpers.find_element_by_xpath("//a[text()='Recipes']").click()
+        search_bar = self.helpers.find_element_by_xpath("//input[@type='text']")
+        self.logger.info("Searching for recipes with pasta")
+        search_bar.send_keys("pasta")
+        search_bar.send_keys(Keys.ENTER)
+
+        recipe_elemenet = self.helpers.find_element_by_xpath("//h5")
+        recipe_elemenet.click()
+        self.logger.info("Adding %s recipe to the list" % recipe_elemenet.text)
+        #
+        time.sleep(2)
+        save_recipe_in_list_bar = self.helpers.find_element_by_xpath("//input[@type='text']", True)[1]
+
+        save_recipe_in_list_bar.send_keys(list_name)
+        save_recipe_in_list_bar.send_keys(Keys.ENTER)
+
+        self.driver.get(self.local_ip + "lists")
+
+        self.helpers.find_element_by_xpath("//a[text()='Lists']").click()
+        time.sleep(1)
+        list_elements = self.helpers.find_element_by_xpath("//div[contains(@class, 'MuiFormGroup-root css-dmmspl-MuiFormGroup-root')]/label/span/following-sibling::span", True)
+
+        for list_ele in list_elements:
+            self.logger.info("Current list name: %s" % list_ele.text)
+            if list_ele.text == list_name:
+                test_bool = True
+        if not test_bool:
+            raise AssertionError("The new list did not get added!")
+        self.logger.info("The test was a success!")
+
+
+    def search_for_recipe_in_lists(self):
+        """
+        """
+        self._login()
+        search_key = "pizza"
+        self.logger.info("Redirecting to lists.")
+        self.helpers.find_element_by_xpath("//a[text()='Lists']").click()
+        self.logger.info("Searching for recipes containing the string: %s" % search_key)
+        self.helpers.find_element_by_xpath("//input").send_keys(search_key)
+        card_headers = self.helpers.find_element_by_xpath("//div[contains(@class, 'MuiCardContent-root')]/h5", True)
+        self.logger.debug(card_headers)
+
+        if len(card_headers) > 1:
+            for recipe_name in card_headers:
+                if search_key.lower() not in recipe_name.text.lower():
+                    raise AssertionError("The search key did not work, there is recipes that does not contain the search key: %s" % search_key)
+        else:
+            if search_key.lower() not in card_headers[0].text.lower():
+                raise AssertionError("The search key did not work, there is recipes that does not contain the search key: %s" % search_key)
+        self.logger.info("The search went well !")
 
     def test_lists_filters(self):
         """
         """
-        self._sign_up()
+        self._login()
 
         self.helpers.find_element_by_xpath("//a[text()='Lists']").click()
-        self.helpers.find_element_by_xpath("//div[contains(@class, 'MuiFormGroup-root css-1h7anqn')]/label/span/input").click()
+        self.helpers.find_element_by_xpath("//div[contains(@class, 'css-dmmspl-MuiFormGroup-root')]/label/span/input").click()
 
-        text_t = self.helpers.find_element_by_xpath("//div[contains(@class, 'MuiFormGroup-root css-1h7anqn')]/label/span/following-sibling::span").text
+        # TODO: Figure out how to see if its checked or not.
+        text_t = self.helpers.find_element_by_xpath("//div[contains(@class, 'css-dmmspl-MuiFormGroup-root')]/label/span/following-sibling::span").text
         self.logger.info("Unchecking list: %s" % text_t)
 
         #time.sleep(3)
@@ -209,41 +258,26 @@ class TestBank(unittest.TestCase):
                 raise AssertionError("The test failed, the %s list is still shown" % text_t)
         self.logger.info("The list was unchecked.")
 
-    def search_for_recipe(self):
+    def check_if_email_invalid(self):
         """
         """
-        search_key = "oa"
-        self._sign_up()
-        self.helpers.find_element_by_xpath("//a[text()='Lists']").click()
-        #input_field = self.helpers.find_element_by_id('mui-32')
-        #input_field.send_keys('oatmeal')
-        self.helpers.find_element_by_xpath("//input").send_keys(search_key)
-        card_headers = self.helpers.find_element_by_xpath("//div[contains(@class, 'MuiCardContent-root')]/h5", True)
-        for recipe_name in card_headers:
-            if search_key not in recipe_name:
-                raise AssertionError("The search key did not work, there is recipes that does not contain the search key: %s" % search_key)
-        self.logger.info("The search went well !")
+        self.logger.info("Testing if email can be invalid")
 
+    def check_if_password_invalid(self):
+        """
+        """
+        self.logger.info("Testing if password can be invalid")
 
-    def test_login(self):
-        # get_url = self.local_ip
-        # self.driver.get(get_url)
-        time.sleep(3)
-        self.helpers.find_element_by_xpath("//a[text()='Log in']").click()
-        time.sleep(5)
-        self.driver.quit()
+    def suites(self):
+        """
+        """
+        suite = unittest.TestSuite()
+        # suite.addTest(TestBank('test_see_all_recipe_btn'))
+        suite.addTest(TestBank('test_lists_filters'))
+        # suite.addTest(TestBank('check_username_after_login'))
+        # suite.addTest(TestBank('test_login'))
+        return suite
 
-
-def suites():
-    """
-    """
-    suite = unittest.TestSuite()
-    # suite.addTest(TestBank('test_see_all_recipe_btn'))
-    suite.addTest(TestBank('search_for_recipe'))
-    # suite.addTest(TestBank('check_username_after_login'))
-    # suite.addTest(TestBank('test_login'))
-    return suite
-
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner()
-    runner.run(suites())
+#if __name__ == "__main__":
+    #runner = unittest.TextTestRunner()
+    #runner.run(suites())
