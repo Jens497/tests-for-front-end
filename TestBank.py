@@ -96,7 +96,7 @@ class TestBank(unittest.TestCase):
             # if exctype == self.failureException:  # Register failure, do some post-processing if needed
             # self.on_fail()
         self._restoreStdout()
-        self.logger.info("********TestClass.tearDown ends*************")
+        self.logger.info("********TestClass.tearDown ends*************\n\n")
 
     def _login(self):
         """
@@ -131,12 +131,11 @@ class TestBank(unittest.TestCase):
         except NoSuchElementException as e:
             raise AssertionError(e)
 
-
     def test_see_all_recipe_btn(self):
         """
         Test when click on the 'see all recipes' on home page, that it redirects you to signup page.
         """
-        url_after_click = self.local_ip + "/signup"
+        url_after_click = self.local_ip + "signup"
         self.logger.info("Finding btn-all-recipes and clicking on it")
         try :
             self.helpers.find_element_by_id("btn-all-recipes").click()
@@ -144,16 +143,16 @@ class TestBank(unittest.TestCase):
         except NoSuchElementException as e:
             raise AssertionError(e)
 
-        unique_print = self.helpers.find_element_by_xpath("//button[text()='Sign up']")
+        unique_print = self.helpers.find_element_by_xpath("//button[@type='submit']")
 
         if unique_print and self.driver.current_url == url_after_click:
             self.logger.info("SUCCESS.:\nThe button redirected to sign up page.")
         else:
             raise AssertionError("The button did not redirect to signup page")
 
-    def check_sign_up(self):
+    def check_sign_up_log_in(self):
         """
-        Check that when signing up then under profile its the same as what you signed up with.
+            If the user is already there it will just use log in instead.
         """
         self.logger.info("Redirecting to sign up page.")
         try:
@@ -217,7 +216,6 @@ class TestBank(unittest.TestCase):
             raise AssertionError("The new list did not get added!")
         self.logger.info("The test was a success!")
 
-
     def search_for_recipe_in_lists(self):
         """
         """
@@ -247,7 +245,6 @@ class TestBank(unittest.TestCase):
         self.helpers.find_element_by_xpath("//a[text()='Lists']").click()
         self.helpers.find_element_by_xpath("//div[contains(@class, 'css-dmmspl-MuiFormGroup-root')]/label/span/input").click()
 
-        # TODO: Figure out how to see if its checked or not.
         text_t = self.helpers.find_element_by_xpath("//div[contains(@class, 'css-dmmspl-MuiFormGroup-root')]/label/span/following-sibling::span").text
         self.logger.info("Unchecking list: %s" % text_t)
 
@@ -272,10 +269,12 @@ class TestBank(unittest.TestCase):
         """
         """
         suite = unittest.TestSuite()
-        # suite.addTest(TestBank('test_see_all_recipe_btn'))
+        suite.addTest(TestBank('test_see_all_recipe_btn'))
+        suite.addTest(TestBank('check_sign_up_log_in'))
         suite.addTest(TestBank('test_lists_filters'))
-        # suite.addTest(TestBank('check_username_after_login'))
-        # suite.addTest(TestBank('test_login'))
+        suite.addTest(TestBank('create_new_list'))
+        suite.addTest(TestBank('search_for_recipe_in_lists'))
+        suite.addTest(TestBank('test_lists_filters'))
         return suite
 
 #if __name__ == "__main__":
