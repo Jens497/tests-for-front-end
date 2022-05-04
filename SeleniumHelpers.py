@@ -1,32 +1,9 @@
 '''
 @author: SKR
 '''
-# import xml.etree.ElementTree as Et
-# import
-
-# tree = Et.parse(source, parser)
-# ===============================================================================
-# tree = Et.parse('country_data.xml')
-# root = tree.getroot()
-#
-# for country in root.findall('country'):
-#   rank = int(country.find('rank').text)
-#   if rank > 50:
-#     root.remove(country)
-#
-# tree.write('country_data.xml')
-# ===============================================================================
-
 import time
 import datetime
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, NoAlertPresentException, ElementNotVisibleException, \
-    InvalidElementStateException
-from selenium.common.exceptions import UnexpectedAlertPresentException, WebDriverException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 
 
 class SeleniumHelpers(object):
