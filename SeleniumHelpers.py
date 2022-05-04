@@ -10,10 +10,6 @@ class SeleniumHelpers(object):
 
     def __init__(self, driver):
         self.driver = driver
-        # Is needed for the test itself, the test will not start unless this implicit wait is set
-        #self.driver.implicitly_wait(30)
-        # self.local_ip = "http://172.24.39.45:9000"
-        #self.local_ip = "https://recipe.bhsi.xyz/frontend"
         self.command_send_time = None
 
     def send_find_element_command(self, by, value, elements=False):
