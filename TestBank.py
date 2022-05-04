@@ -67,10 +67,6 @@ class TestBank(unittest.TestCase):
         self._setupStdout()
         self.logger.info(self._testMethodName)  # Shows MethodName of current running method
         self.logger.info("*************Test Case method ends********")
-        # print "Done with setup"
-        # print self._testMethodName
-        # self.logger.info("Done with setup")
-        # self.logger.warn(self._testMethodName)
 
     def tearDown(self):
         super(TestBank, self).tearDown()
@@ -90,11 +86,7 @@ class TestBank(unittest.TestCase):
                     error += '\n'
                 msg.append(STDERR_LINE % error)
             dsa = ''.join(msg)
-            # print dsa
             self.logger.error(dsa)
-            # print dsa
-            # if exctype == self.failureException:  # Register failure, do some post-processing if needed
-            # self.on_fail()
         self._restoreStdout()
         self.logger.info("********TestClass.tearDown ends*************\n\n")
 
@@ -276,7 +268,3 @@ class TestBank(unittest.TestCase):
         suite.addTest(TestBank('search_for_recipe_in_lists'))
         suite.addTest(TestBank('test_lists_filters'))
         return suite
-
-#if __name__ == "__main__":
-    #runner = unittest.TextTestRunner()
-    #runner.run(suites())
